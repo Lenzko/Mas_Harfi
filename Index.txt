@@ -1,0 +1,351 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SPA Dinamis</title>
+
+  <!-- ==========================
+       STYLES
+       ========================== -->
+  <!-- Bootstrap CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- Bootstrap Icons -->
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+  <!-- Google Fonts: Poppins -->
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500&display=swap" rel="stylesheet">
+  <!-- Font Awesome -->
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" rel="stylesheet">
+
+  <!-- ==========================
+       SCRIPTS
+       ========================== -->
+  <!-- SweetAlert2 -->
+  <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+  <!-- Bootstrap JS Bundle -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+  <!-- ==========================
+       CUSTOM STYLES
+       ========================== -->
+  <style>
+    /* =========================================================
+       GLOBAL STYLE
+       ========================================================= */
+    *, *::before, *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html, body {
+      font-family: 'Poppins', sans-serif;
+      font-size: 14px;
+      line-height: 1.5;
+      color: #333;
+    }
+
+    #container { width: 100%; }
+
+    /* =========================================================
+       LOGIN PAGE
+       ========================================================= */
+    #container.login-container { display: flex; width: 100%; min-height: 100vh; }
+
+    /* ---- Left Login Panel ---- */
+    #login-left {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      color: #fff;
+      padding: 60px 40px;
+      text-align: center;
+      overflow: hidden;
+      transition: all 0.4s ease-in-out;
+    }
+
+    #login-left img {
+      width: 180px;
+      height: auto;
+      border-radius: 20%;
+      margin-bottom: 25px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    #login-left h1 {
+      font-size: 3rem;
+      font-weight: 700;
+      margin-bottom: 15px;
+      text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    #login-left p {
+      font-size: 1.2rem;
+      line-height: 1.5;
+      max-width: 300px;
+      margin: 0 auto;
+    }
+
+    @keyframes float {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-12px); }
+    }
+
+    /* ---- Right Login Panel ---- */
+    #login-right {
+      flex: 1;
+      background: #f5f6fa;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      transition: all 0.4s ease-in-out;
+    }
+
+    /* ---- Login Card ---- */
+    .login-card {
+      width: 100%;
+      max-width: 420px;
+      background: #fff;
+      padding: 50px 35px;
+      border-radius: 25px;
+      box-shadow: 0 15px 30px rgba(0, 0, 0, 0.15);
+    }
+
+    .login-card h3 {
+      margin-bottom: 35px;
+      text-align: center;
+      color: #2c3e50;
+      font-weight: 600;
+    }
+
+    .login-card input {
+      width: 100%;
+      padding: 14px 18px;
+      margin-bottom: 20px;
+      border-radius: 12px;
+      border: 1px solid #ddd;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+
+    .login-card input:focus {
+      border-color: #667eea;
+      box-shadow: 0 0 8px rgba(102, 126, 234, 0.5);
+      outline: none;
+    }
+
+    .login-card button {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      font-size: 1.1rem;
+      font-weight: 600;
+      background: #667eea;
+      color: #fff;
+      border: none;
+      transition: all 0.3s ease;
+    }
+
+    .login-card button:hover {
+      background: #5563c1;
+      transform: translateY(-2px);
+    }
+
+    @media (max-width: 992px) {
+      #container.login-container { flex-direction: column; }
+      #login-left, #login-right { flex: unset; width: 100%; padding: 30px 20px; }
+      #login-left img { width: 150px; height: 160px; }
+      #login-left h1 { font-size: 2.2rem; }
+    }
+
+    /* =========================================================
+       SIDEBAR
+       ========================================================= */
+    #sidebar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 220px;
+      height: 100vh;
+      padding-top: 20px;
+      background: rgba(44, 62, 80, 0.95);
+      backdrop-filter: blur(10px);
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      overflow-y: auto;
+      overflow-x: hidden;
+      box-shadow: 2px 0 12px rgba(0, 0, 0, 0.15);
+      transition: all 0.3s;
+      z-index: 1000;
+    }
+
+    #sidebar.collapsed { width: 60px; }
+    #sidebar.collapsed + #app { margin-left: 60px; }
+
+    /* ---- Sidebar Header ---- */
+    .sidebar-header { display: flex; align-items: center; justify-content: space-between; padding: 10px; transition: all 0.3s; }
+
+    /* ---- User Info ---- */
+    .user-info { display: flex; align-items: center; gap: 5px; transition: all 0.3s; }
+    .avatar {
+      width: 40px; height: 40px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #667eea, #764ba2);
+      display: flex; align-items: center; justify-content: center;
+      color: #fff; font-weight: bold;
+      transition: all 0.3s;
+    }
+    .user-text { transition: all 0.3s; }
+
+    /* ---- Sidebar Toggle Button ---- */
+    .toggle-btn {
+      width: 35px; height: 35px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.15);
+      border: none;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.3s;
+    }
+    .toggle-btn:hover { background: rgba(255, 255, 255, 0.3); }
+
+    /* ---- Sidebar Menu ---- */
+    #menu-pages .menu-btn, #menu-pages .submenu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 10px 15px;
+      background: none;
+      border: none;
+      color: inherit;
+      text-align: left;
+      cursor: pointer;
+      border-radius: 10px;
+      transition: all 0.3s;
+    }
+
+    #menu-pages .menu-btn:hover, #menu-pages .submenu-btn:hover { background: linear-gradient(90deg, #667eea, #764ba2); color: #fff; }
+    #menu-pages .menu-btn .left, #menu-pages .submenu-btn .left { display: flex; align-items: center; gap: 12px; }
+    #menu-pages .menu-btn .chevron { transition: transform 0.3s; }
+    #menu-pages .menu-btn .chevron.rotated { transform: rotate(90deg); }
+
+    #menu-pages .submenu { display: none; flex-direction: column; padding-left: 20px; transition: all 0.3s ease; }
+    #menu-pages .submenu.show { display: flex; }
+    #menu-pages .submenu-btn { padding-left: 20px; }
+
+    #sidebar.collapsed #menu-pages .submenu-btn { justify-content: center; padding-left: 0; }
+    #sidebar.collapsed #menu-pages .submenu-btn span { display: none; }
+
+    #menu-pages .menu-btn.active { background: rgba(255, 255, 255, 0.2); }
+    #menu-pages .submenu-btn.active { background: rgba(255, 255, 255, 0.15); }
+
+    /* ---- Logout Button ---- */
+    #btnLogout {
+      margin: 20px auto;
+      padding: 12px 20px;
+      width: 80%;
+      border: none;
+      background: #e74c3c;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      border-radius: 10px;
+      font-weight: 600;
+      transition: background 0.3s;
+    }
+    #btnLogout:hover { background: #c0392b; }
+
+    /* ---- Sidebar Responsive ---- */
+    @media (min-width: 992px) {
+      #sidebar.collapsed .user-text, #sidebar.collapsed #btnLogout span { display: none !important; }
+      #sidebar.collapsed .sidebar-header { flex-direction: column; align-items: center; gap: 10px; padding: 15px 0; }
+      #sidebar.collapsed #sidebar-toggle { order: 1; margin-top: 10px; }
+      #sidebar.collapsed #menu-pages .menu-btn .left span, #sidebar.collapsed #menu-pages .submenu-btn .left span { display: none; }
+    }
+
+    @media (max-width: 992px) {
+      #sidebar { left: -220px; transition: left 0.3s; }
+      #sidebar.show { left: 0; }
+      #sidebar-toggle-mobile {
+        position: fixed;
+        top: 50%;
+        left: 10px;
+        transform: translateY(-50%);
+        z-index: 101;
+        width: 40px;
+        height: 40px;
+        border-radius: 50%;
+        background: rgba(44, 62, 80, 0.9);
+        color: #fff;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        cursor: pointer;
+      }
+    }
+
+    /* =========================================================
+       APP & CARDS
+       ========================================================= */
+    #app {
+      opacity: 0;
+      padding: 30px;
+      min-height: 100vh;
+      background: #f9f9f9;
+      transition: opacity 0.3s;
+      margin-left: 220px;
+      overflow-y: auto;
+      height: 100vh;
+    }
+    #app.show { opacity: 1; }
+
+    .card-content {
+      width: 100%;
+      padding: 25px;
+      background: #fff;
+      border-radius: 12px;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.08);
+      overflow-x: auto;
+      transition: all 0.3s ease;
+    }
+
+    @media (max-width: 992px) {
+      #container { display: block; }
+      #app { width: 100%; margin-left: 0; padding: 15px; }
+    }
+
+    @media (max-width: 576px) {
+      #app { padding: 15px; }
+      .card-content { padding: 12px; }
+    }
+
+    /* =========================================================
+       FLEX FIX
+       ========================================================= */
+    .d-flex > #app { min-width: 0; overflow-x: auto; }
+
+  </style>
+</head>
+<body>
+  <div id="container"></div>
+
+  <!-- ==========================
+       INCLUDE JS MODULES
+       ========================== -->
+  <?!= include("App_Js"); ?>
+  <?!= include("Dashboard_Js"); ?>
+</body>
+</html>
